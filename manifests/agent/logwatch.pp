@@ -17,10 +17,6 @@ class checkmk::agent::logwatch(
   $sata_reset_log_check = true,
 ) {
 
-  package {'check-mk-agent-logwatch':
-    ensure => installed,
-  }
-
   if $logwatch_conf != undef {
     $logwatch_content = $logwatch_conf
   } else {
@@ -33,7 +29,7 @@ class checkmk::agent::logwatch(
     mode    => '0644',
     owner   => root,
     group   => root,
-    require => Package['check-mk-agent-logwatch'],
+    require => Package['check-mk-agent'],
   }
 
 }

@@ -1,5 +1,4 @@
-#!/usr/bin/python
-# -*- encoding: utf-8; py-indent-offset: 4 -*-
+#!/bin/sh
 # +------------------------------------------------------------------+
 # |             ____ _               _        __  __ _  __           |
 # |            / ___| |__   ___  ___| | __   |  \/  | |/ /           |
@@ -24,32 +23,9 @@
 # to the Free Software Foundation, Inc., 51 Franklin St,  Fifth Floor,
 # Boston, MA 02110-1301 USA.
 
-# This Check_MK-Agent plugin gathers information about mailinglists hosted
-# by the local mailman instance.
+# This is not part of the standard agent since it can take very
+# long to run if your TCP/UDP table is large. Netstat seems to
+# have an execution time complexity of at least O(n^2) on Linux.
 
-# Needed if you have located your mailman python modules not in default
-# python module paths
-import sys
-sys.path.append("/usr/local/mailman")
-sys.path.append("/usr/lib/mailman")
-
-# Set to True to filter out all "hidden" mailinglists
-only_advertised = True
-
-from Mailman import Utils, MailList
-
-# 1. list memberships
-print '<<<mailman_lists>>>'
-total_members = set([])
-for name in sorted(Utils.list_names()):
-    mlist = MailList.MailList(name, lock=0)
-    if only_advertised and not mlist.advertised:
-        continue
-
-    rmembers = mlist.getRegularMemberKeys()
-    dmembers = mlist.getDigestMemberKeys()
-    members = rmembers + dmembers
-    total_members.update(members)
-
-    print '%s %d' % (name, len(members))
-print 'TOTAL %d' % len(total_members)
+echo '<<<netstat>>>'
+netstat -ntu  |  egrep '^(tcp|udp)'
