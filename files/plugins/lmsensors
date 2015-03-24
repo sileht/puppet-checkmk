@@ -1,0 +1,14 @@
+#!/bin/sh
+echo '<<<lmsensors>>>'
+
+# lmsensors output:
+# in0:       +1.36 V  (min =  +0.00 V, max =  +2.99 V)   
+# agent output style:
+# in0         +1.56 V  min   +0.00 V max   +3.32 V   
+
+if [ -x /usr/bin/sensors ]; then
+	# First part gets rid of spaces in the sensorname ('MB Temp' etc)
+	# Second part drops the plus, it gives conflicts with pnp4nagios filenames
+	# Third part drops garbage characters that we can't use.
+	/usr/bin/sensors -A | sed  -e 's/^\([^:]*\)\s/\1_/g' -e 's/^+//' -e 's/[^a-z0-9_\+\ \.\-]//ig'
+fi
